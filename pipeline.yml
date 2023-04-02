@@ -16,11 +16,11 @@ resources:
 
 
 variables:
-  mysqlHost: '127.0.0.1'
-  mysqlUser: 'root'
-  mysqlPassword: 'cc9944aaff'
-  mysqlDatabase: 'demo'
-  ConnectionStrings__MySQL: "server=$(mysqlHost); Port=3306; database=$(mysqlDatabase); uid=$(mysqlUser); password=$(mysqlPassword);"
+  MYSQL_HOST: '127.0.0.1'
+  MYSQL_USER: 'root'
+  MYSQL_PASSWORD: 'cc9944aaff'
+  MYSQL_DATABASE: 'demo'
+  CONNECTIONSTRINGS__MYSQL: "server=$(MYSQL_HOST); Port=3306; database=$(MYSQL_DATABASE); uid=$(MYSQL_USER); password=$(MYSQL_PASSWORD);"
 
 
 stages:
@@ -46,7 +46,7 @@ stages:
         max_retries=30
         retry_count=0
 
-        until mysql -h $(mysqlHost) -u $(mysqlUser) -p$(mysqlPassword) -e "SELECT VERSION();" || [ $retry_count -ge $max_retries ]; do
+        until mysql -h $(MYSQL_HOST) -u $(MYSQL_USER) -p$(MYSQL_PASSWORD) -e "SELECT VERSION();" || [ $retry_count -ge $max_retries ]; do
           ((retry_count++))
           echo 'Retry '$retry_count' of '$max_retries
           sleep 1;
@@ -58,7 +58,7 @@ stages:
         fi
       displayName: 'Wait for MySQL connection'
 
-    - script: mysql -h $(mysqlHost) -u $(mysqlUser) -p$(mysqlPassword) $(mysqlDatabase) < ./src/Database/mysql-init.sql
+    - script: mysql -h $(MYSQL_HOST) -u $(MYSQL_USER) -p$(MYSQL_PASSWORD) $(MYSQL_DATABASE) < ./src/Database/mysql-init.sql
       displayName: 'MySQL init samples'
 
     - task: UseDotNet@2

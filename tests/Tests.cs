@@ -43,12 +43,9 @@ public class Tests
 
         // Assert
         act.Should()
-           .Be200Ok();
-
-        //act.Should()
-        //   .Be200Ok()
-        //   .And.Satisfy<IEnumerable<ProductResponse>>(model =>
-        //        model.Should().HaveCountGreaterThanOrEqualTo(3));
+           .Be200Ok()
+           .And.Satisfy<IEnumerable<ProductResponse>>(model =>
+                model.Should().HaveCountGreaterThanOrEqualTo(3));
     }
 
     [Fact]
@@ -64,15 +61,12 @@ public class Tests
 
         // Assert
         act.Should()
-           .Be200Ok();
-
-        //act.Should()
-        //   .Be200Ok()
-        //   .And.Satisfy<ProductResponse>(model =>
-        //        model.Should().Match<ProductResponse>(m =>
-        //            m.Id == 2 &&
-        //            m.Name == "Keyboard" &&
-        //            m.Quantity == 4));
+           .Be200Ok()
+           .And.Satisfy<ProductResponse>(model =>
+                model.Should().Match<ProductResponse>(m =>
+                    m.Id == 2 &&
+                    m.Name == "Keyboard" &&
+                    m.Quantity == 4));
     }
 
     [Fact]
