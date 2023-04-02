@@ -11,6 +11,10 @@
 - [jobs.job.container](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/jobs-job-container?view=azure-pipelines)
 
 
+### Details
+- [Healthcheck](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml#healthcheck)
+
+
 ### References
 
 - [Microsoft devblog](https://devblogs.microsoft.com/devops/using-containerized-services-in-your-pipeline/)
