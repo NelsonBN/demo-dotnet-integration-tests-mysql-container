@@ -1,0 +1,55 @@
+name: 'Demo Integration Tests'
+
+trigger:
+- main
+
+
+resources:
+  containers:
+  - container: mysql
+    image: mysql:8.0.32
+    ports:
+      - 3306:3306
+    env:
+      MYSQL_ROOT_PASSWORD: cc9944aaff
+      MYSQL_DATABASE: demo
+
+
+stages:
+
+- stage: integrationTests
+  displayName: 'Integration tests'
+  jobs:
+
+  - job: tests
+    displayName: 'Tests'
+    pool:
+      vmImage: 'ubuntu-latest'
+    services:
+      mysql: mysql
+    steps:
+
+    - script: docker ps
+      displayName: 'Show running containers'
+
+    - script: |
+        mysql -uroot -pcc9944aaff -e "SHOW databases;"
+        mysql -uroot -pcc9944aaff -e "SELECT VERSION();"
+      displayName: 'Test MySQL connection'
+
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        version: '7.x'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore dependecies'
+      inputs:
+        command: 'restore'
+        projects: '**/**/*.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Running tests'
+      inputs:
+        command: test
+        projects: '**/*tests/*Tests.csproj'
