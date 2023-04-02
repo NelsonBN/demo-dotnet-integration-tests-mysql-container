@@ -15,6 +15,14 @@ resources:
       MYSQL_DATABASE: demo
 
 
+variables:
+  mysqlHost: '127.0.0.1'
+  mysqlUser: 'root'
+  mysqlPassword: 'cc9944aaff'
+  mysqlDatabase: 'demo'
+  ConnectionStrings__MySQL: "server=$(mysqlHost); Port=3306; database=$(mysqlDatabase); uid=$(mysqlUser); password=$(mysqlPassword);"
+
+
 stages:
 
 - stage: integrationTests
@@ -33,9 +41,25 @@ stages:
       displayName: 'Show running containers'
 
     - script: |
-        mysql -uroot -pcc9944aaff -e "SHOW databases;"
-        mysql -uroot -pcc9944aaff -e "SELECT VERSION();"
-      displayName: 'Test MySQL connection'
+        echo 'Waiting for MySQL database to accept connections'
+
+        max_retries=30
+        retry_count=0
+
+        until mysql -h $(mysqlHost) -u $(mysqlUser) -p$(mysqlPassword) -e "SELECT VERSION();" || [ $retry_count -ge $max_retries ]; do
+          ((retry_count++))
+          echo 'Retry '$retry_count' of '$max_retries
+          sleep 1;
+        done;
+
+        if [ $retry_count -eq $max_retries ]; then
+          echo "Failed to connect to MySQL server after $max_retries attempts. Exiting."
+          exit 1
+        fi
+      displayName: 'Wait for MySQL connection'
+
+    - script: mysql -h $(mysqlHost) -u $(mysqlUser) -p$(mysqlPassword) $(mysqlDatabase) < ./src/Database/mysql-init.sql
+      displayName: 'MySQL init samples'
 
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
